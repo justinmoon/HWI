@@ -247,12 +247,22 @@ class ColdcardClient(HardwareWalletClient):
         # Upload multisig enrollment file
         file_len, sha = self.device.upload_file(enrollment_file)
         # Use uploaded file to prompt user to enroll multisig wallet
-        self.device.send_recv(CCProtocolPacker.enroll_multisig(file_len, sha))
+        enroll_result = self.device.send_recv(CCProtocolPacker.enroll_multisig(file_len, sha))
+        # Accept enrollment if we're using the simulator
+        if self.device.is_simulator:
+            self.device.send_recv(CCProtocolPacker.sim_keypress(b'y'))
         return {'success': True}
 
     # Check multisig
-    def check_multisig(self, m, n, xor_xfps):
-        self.device.check_multisig(m, n, xor_xfps)
+    def check_multisig(self, m, fingerprint_list):
+        n = len(fingerprint_list)
+        fingerprint_xor = 0
+        for fingerprint in fingerprint_list:
+            fingerprint_bytes = bytes.fromhex(fingerprint)
+            fingerprint_int = int.from_bytes(fingerprint_bytes, 'little')
+            fingerprint_xor ^= fingerprint_int
+        result = self.device.send_recv(CCProtocolPacker.check_multisig(m, n, fingerprint_xor))
+        return {"enrolled": bool(result)}
 
 def enumerate(password=''):
     results = []

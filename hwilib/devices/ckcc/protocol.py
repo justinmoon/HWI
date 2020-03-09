@@ -126,9 +126,9 @@ class CCProtocolPacker:
         return pack('<4sI32s', b'enrl', length, file_sha)
 
     @staticmethod
-    def check_multisig(M, N, xfp_xor):
-        # do we have a wallet already that matches M+N and xor(*xfps)?
-        return pack('<4s3I', b'msck', M, N, xfp_xor)
+    def check_multisig(m, n, xfp_xor):
+        # do we have a wallet already that matches m+n and xor(*xfps)?
+        return pack('<4s3I', b'msck', m, n, xfp_xor)
 
 class CCProtocolUnpacker:
     # Take a binary response, and turn it into a python object

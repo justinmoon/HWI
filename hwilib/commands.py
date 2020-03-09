@@ -247,4 +247,9 @@ def install_udev_rules(source, location):
     return {'error': 'udev rules are not needed on your platform', 'code': NOT_IMPLEMENTED}
 
 def enroll_multisig(client, enrollment_file):
-    return client.enroll_multisig(enrollment_file.encode('ascii'))
+    enrollment_file_bytes = enrollment_file.encode('ascii')
+    return client.enroll_multisig(enrollment_file_bytes)
+
+def check_multisig(client, m, fingerprints):
+    fingerprint_list = fingerprints.split(',')
+    return client.check_multisig(m, fingerprint_list)

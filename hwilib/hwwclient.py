@@ -66,9 +66,9 @@ class HardwareWalletClient(object):
         raise NotImplementedError('The HardwareWalletClient base class does not implement this method')
 
     # Enroll multisig
-    def enroll_multisig(self):
+    def enroll_multisig(self, enrollment_file_bytes):
         raise NotImplementedError('The HardwareWalletClient base class does not implement this method')
 
     # Check multisig
-    def check_multisig(self):
+    def check_multisig(self, m, fingerprint_list):
         raise NotImplementedError('The HardwareWalletClient base class does not implement this method')

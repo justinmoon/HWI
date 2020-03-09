@@ -101,8 +101,25 @@ def coldcard_test_suite(simulator, rpc, userpass, interface):
             9d033c9d: tpubDC65zr1UjvBnuJERg1Fp4KdDwaLHEN4QViCm1F41A8ZoTachjgdKo38RCFbnWfiWRW8hg9DTbaGCkUSc5zXCNfW2KJ2KBJe94YFCGyshZ1J
             0f056943: tpubDDpWvmUrPZrhSPmUzCMBHffvC3HyMAPnWDSAQNBTnj1iZeJa7BZQEttFiP4DS4GCcXQHezdXhn86Hj6LHX5EDstXPWrMaSneRWM8yUf6NFd
             """
-            result = self.do_command(self.dev_args + ['enrollmultisig', enrollment_file_contents])
-            self.assertTrue(result['success'])
+            initial_check_multisig_result = self.do_command(self.dev_args + ['checkmultisig', "2", "9d033c9d,0f056943"])
+            self.assertFalse(initial_check_multisig_result['enrolled'])
+            enroll_multisig_result = self.do_command(self.dev_args + ['--expert', 'enrollmultisig', enrollment_file_contents])
+            self.assertTrue(enroll_multisig_result['success'])
+            self.assertNotIn('error', enroll_multisig_result)
+            final_check_multisig_result = self.do_command(self.dev_args + ['checkmultisig', "2", "9d033c9d,0f056943"])
+            self.assertTrue(final_check_multisig_result['enrolled'])
+
+        def test_bad_enroll_multisig(self):
+            # Missing xpubs
+            enrollment_file_contents = """
+            Name: test
+            Policy: 2 of 2
+            Derivation: m/48'/1'/0'
+            Format: P2WSH
+            """
+            enroll_multisig_result = self.do_command(self.dev_args + ['enrollmultisig', enrollment_file_contents])
+            self.assertEqual(enroll_multisig_result['error'], "Remote Error: need xpubs")
+            self.assertNotIn('success', enroll_multisig_result)
 
     # Generic device tests
     suite = unittest.TestSuite()

@@ -2,7 +2,7 @@
 
 from .commands import backup_device, displayaddress, enumerate, find_device, \
     get_client, getmasterxpub, getxpub, getkeypool, getdescriptors, prompt_pin, restore_device, send_pin, setup_device, \
-    signmessage, signtx, wipe_device, install_udev_rules, enroll_multisig
+    signmessage, signtx, wipe_device, install_udev_rules, enroll_multisig, check_multisig
 from .errors import (
     handle_errors,
     DEVICE_CONN_ERROR,
@@ -70,6 +70,9 @@ def install_udev_rules_handler(args):
 
 def enroll_multisig_handler(args, client):
     return enroll_multisig(client, args.enrollment_file)
+
+def check_multisig_handler(args, client):
+    return check_multisig(client, args.m, args.fingerprints)
 
 class HWIHelpFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
     pass
@@ -187,6 +190,11 @@ def process_commands(cli_args):
     enrollmultisig_parser = subparsers.add_parser('enrollmultisig', help='Make ColdCard commit to a multisig wallet')
     enrollmultisig_parser.add_argument('enrollment_file', help='ColdCard multisig enrollment file')
     enrollmultisig_parser.set_defaults(func=enroll_multisig_handler)
+
+    checkmultisig_parser = subparsers.add_parser('checkmultisig', help='Check that multisig wallet exists on ColdCard')
+    checkmultisig_parser.add_argument('m', type=int, help='Number of required signatures for this multisig wallet')
+    checkmultisig_parser.add_argument('fingerprints', help='Comma-separated list of fingerprints for signers in this wallet')
+    checkmultisig_parser.set_defaults(func=check_multisig_handler)
 
     if sys.platform.startswith("linux"):
         udevrules_parser = subparsers.add_parser('installudevrules', help='Install and load the udev rule files for the hardware wallet devices')
