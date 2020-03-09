@@ -2,7 +2,7 @@
 
 from .commands import backup_device, displayaddress, enumerate, find_device, \
     get_client, getmasterxpub, getxpub, getkeypool, getdescriptors, prompt_pin, restore_device, send_pin, setup_device, \
-    signmessage, signtx, wipe_device, install_udev_rules
+    signmessage, signtx, wipe_device, install_udev_rules, enroll_multisig
 from .errors import (
     handle_errors,
     DEVICE_CONN_ERROR,
@@ -67,6 +67,9 @@ def send_pin_handler(args, client):
 
 def install_udev_rules_handler(args):
     return install_udev_rules('udev', args.location)
+
+def enroll_multisig_handler(args, client):
+    return enroll_multisig(client, args.enrollment_file)
 
 class HWIHelpFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
     pass
@@ -180,6 +183,10 @@ def process_commands(cli_args):
     sendpin_parser = subparsers.add_parser('sendpin', help='Send the numeric positions for your PIN to the device')
     sendpin_parser.add_argument('pin', help='The numeric positions of the PIN')
     sendpin_parser.set_defaults(func=send_pin_handler)
+
+    enrollmultisig_parser = subparsers.add_parser('enrollmultisig', help='Make ColdCard commit to a multisig wallet')
+    enrollmultisig_parser.add_argument('enrollment_file', help='ColdCard multisig enrollment file')
+    enrollmultisig_parser.set_defaults(func=enroll_multisig_handler)
 
     if sys.platform.startswith("linux"):
         udevrules_parser = subparsers.add_parser('installudevrules', help='Install and load the udev rule files for the hardware wallet devices')

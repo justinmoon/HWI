@@ -242,6 +242,18 @@ class ColdcardClient(HardwareWalletClient):
     def send_pin(self, pin):
         raise UnavailableActionError('The Coldcard does not need a PIN sent from the host')
 
+    # Enroll multisig
+    def enroll_multisig(self, enrollment_file):
+        # Upload multisig enrollment file
+        file_len, sha = self.device.upload_file(enrollment_file)
+        # Use uploaded file to prompt user to enroll multisig wallet
+        self.device.send_recv(CCProtocolPacker.enroll_multisig(file_len, sha))
+        return {'success': True}
+
+    # Check multisig
+    def check_multisig(self, m, n, xor_xfps):
+        self.device.check_multisig(m, n, xor_xfps)
+
 def enumerate(password=''):
     results = []
     devices = hid.enumerate(COINKITE_VID, CKCC_PID)

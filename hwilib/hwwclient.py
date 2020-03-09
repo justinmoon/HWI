@@ -64,3 +64,11 @@ class HardwareWalletClient(object):
     # Send pin
     def send_pin(self):
         raise NotImplementedError('The HardwareWalletClient base class does not implement this method')
+
+    # Enroll multisig
+    def enroll_multisig(self):
+        raise NotImplementedError('The HardwareWalletClient base class does not implement this method')
+
+    # Check multisig
+    def check_multisig(self):
+        raise NotImplementedError('The HardwareWalletClient base class does not implement this method')

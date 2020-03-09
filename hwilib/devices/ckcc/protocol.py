@@ -119,6 +119,16 @@ class CCProtocolPacker:
         # one time only: put into bag, or readback bag
         return b'bagi' + bytes(new_number)
 
+    @staticmethod
+    def enroll_multisig(length, file_sha):
+        # multisig details must already be uploaded as a text file, this starts approval process.
+        assert len(file_sha) == 32
+        return pack('<4sI32s', b'enrl', length, file_sha)
+
+    @staticmethod
+    def check_multisig(M, N, xfp_xor):
+        # do we have a wallet already that matches M+N and xor(*xfps)?
+        return pack('<4s3I', b'msck', M, N, xfp_xor)
 
 class CCProtocolUnpacker:
     # Take a binary response, and turn it into a python object

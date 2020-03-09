@@ -245,3 +245,6 @@ def install_udev_rules(source, location):
         from .udevinstaller import UDevInstaller
         return UDevInstaller.install(source, location)
     return {'error': 'udev rules are not needed on your platform', 'code': NOT_IMPLEMENTED}
+
+def enroll_multisig(client, enrollment_file):
+    return client.enroll_multisig(enrollment_file.encode('ascii'))
